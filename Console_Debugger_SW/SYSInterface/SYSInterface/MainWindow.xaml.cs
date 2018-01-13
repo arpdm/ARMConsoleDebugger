@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace SYSInterface
 {
@@ -19,7 +20,11 @@ namespace SYSInterface
     {
 
         private SerialLib serialLib = new SerialLib();
+        private static bool runConsole;
 
+        //Multi Threading
+        Thread rxThread;
+       
         /*****************************************************************************
         * Function :   MainWindow
         * Input    :   none
@@ -133,8 +138,8 @@ namespace SYSInterface
         {
 
             dataBitsComboBox.Items.Clear();
-            dataBitsComboBox.Items.Add("8 bits");
-            dataBitsComboBox.Items.Add("7 bits");
+            dataBitsComboBox.Items.Add("8");
+            dataBitsComboBox.Items.Add("7");
 
         }
 
@@ -149,8 +154,8 @@ namespace SYSInterface
         {
 
             stopBitsComboBox.Items.Clear();
-            stopBitsComboBox.Items.Add("1 bit");
-            stopBitsComboBox.Items.Add("2 bits");
+            stopBitsComboBox.Items.Add("1");
+            stopBitsComboBox.Items.Add("2");
 
         }
 
@@ -165,7 +170,7 @@ namespace SYSInterface
         {
 
             handShakeComboBox.Items.Clear();
-            handShakeComboBox.Items.Add("None");
+            handShakeComboBox.Items.Add(System.IO.Ports.Handshake.None);
             handShakeComboBox.Items.Add("RTS/CTS");
 
         }
@@ -180,10 +185,23 @@ namespace SYSInterface
         private void openCommBtn_Click(object sender, RoutedEventArgs e)
         {
 
+            int baudRate = int.Parse(baudRateComboBox.SelectedItem.ToString());
+            int dataBits = int.Parse(dataBitsComboBox.SelectedItem.ToString());
+            string portName = comPortComboBox.SelectedItem.ToString();
 
-            //TODO: Initialize SerialLib
-            //TODO: Open Connection
-            //TODO: Clear the buffer
+            //Initialize SerialLib
+            serialLib.Initialize(baudRate, dataBits, portName, System.IO.Ports.Parity.None, System.IO.Ports.StopBits.One, System.IO.Ports.Handshake.None);
+
+            //Open Connection
+            serialLib.OpenSerialConnection();
+
+            //Clear the buffer
+            rxTextBox.Clear();
+
+            runConsole = true;
+
+            //Start the thread for reading data
+            readData();
 
         }
 
@@ -197,7 +215,7 @@ namespace SYSInterface
         private void closeCommBtn_Click(object sender, RoutedEventArgs e)
         {
 
-
+            runConsole = false;
             //TODO: Clear the buffer
             //TODO: Close the SerialLib communication
 
@@ -212,6 +230,34 @@ namespace SYSInterface
 
         private void clearBufferBtn_Click(object sender, RoutedEventArgs e)
         {
+
+           
+        }
+
+        /*****************************************************************************
+         * Function :   readData
+         * Input    :   none
+         * Output   :   none
+         * Comment  :   
+         ****************************************************************************/
+
+        public void readData(){
+
+            while (runConsole)
+            {
+
+                try
+                {
+
+                    rxTextBox.AppendText(serialLib.rxData());
+                 
+                }
+                catch (TimeoutException)
+                {
+
+
+                }
+            }
 
 
         }

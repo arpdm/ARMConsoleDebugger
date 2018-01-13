@@ -6,7 +6,6 @@ using System.Threading;
 public class SerialLib
 {
 
-
     private static SerialPort serialPort = new SerialPort();
 
     //Serial Comm Configuration
@@ -21,11 +20,6 @@ public class SerialLib
     //Rx Buffer Parameters
 
     private int rxTimeout = 500;
-    static bool rxEnabled = false;
-
-    //Multi Threading
-
-    Thread rxThread = new Thread(rxData);
 
     /*****************************************************************************
      * Function :   GetCommPorts
@@ -95,9 +89,6 @@ public class SerialLib
         //Open the serial port
         serialPort.Open();
 
-        //Start the thread for reading data
-        rxThread.Start();
-
         return true;
 
     }
@@ -122,25 +113,11 @@ public class SerialLib
      * Comment  :   Reads individual bytes recieved from Peripheral device
      ****************************************************************************/
 
-    public static void rxData()
+    public string rxData()
     {
 
-        while (rxEnabled)
-        {
-
-            try
-            {
-
-                int rxByte = serialPort.ReadByte();
-                Console.WriteLine(rxByte);
-
-            }
-            catch (TimeoutException)
-            {
-
-
-            }
-        }
+        string rxData = serialPort.ReadLine();
+        return rxData;
 
     }
 

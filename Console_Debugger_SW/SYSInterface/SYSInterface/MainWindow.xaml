@@ -43,6 +43,8 @@
 
             </Grid>
         </Border>
+        <Label Content="RECEIVE:" HorizontalAlignment="Left" Margin="68,0,0,45" VerticalAlignment="Bottom" Foreground="#FFCFCFCF" FontFamily="Verdana" Grid.Column="1"/>
+        <TextBox x:Name="rxTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="225" Margin="76,199,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="340" Grid.RowSpan="2"/>
 
     </Grid>
 </Window>
